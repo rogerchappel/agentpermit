@@ -1,0 +1,54 @@
+{
+  "name": "agentpermit",
+  "version": "0.1.0",
+  "description": "Local policy simulator for agent tool permissions.",
+  "type": "module",
+  "bin": {
+    "agentpermit": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "examples",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit",
+    "test": "node --test tests/*.test.mjs",
+    "dev": "tsx src/cli.ts",
+    "smoke": "npm run build && bash -c 'node dist/cli.js check fixtures/mixed --format text; test $? -eq 1' && node dist/cli.js check fixtures/clean --format json",
+    "package:smoke": "npm pack --dry-run",
+    "release:check": "npm test && npm run check && npm run build && npm run smoke && npm run package:smoke"
+  },
+  "keywords": [
+    "agents",
+    "cli",
+    "policy",
+    "permissions",
+    "sandbox",
+    "security",
+    "simulator"
+  ],
+  "author": "Roger Chappel",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
