@@ -1,0 +1,18 @@
+{
+  "actions": [
+    {
+      "id": "a-read-readme",
+      "tool": "read",
+      "kind": "file.read",
+      "path": "README.md",
+      "description": "Read local documentation."
+    },
+    {
+      "id": "b-read-fixture",
+      "tool": "read",
+      "kind": "file.read",
+      "path": "fixtures/clean/agentpermit.trace.json",
+      "description": "Inspect fixture input."
+    }
+  ]
+}
