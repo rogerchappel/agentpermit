@@ -1,0 +1,9 @@
+{
+  "actions": [
+    {
+      "id": "read-readme",
+      "tool": "read",
+      "path": "README.md"
+    }
+  ]
+}

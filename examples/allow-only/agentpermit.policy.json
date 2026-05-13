@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "name": "allow-only-example",
+  "defaultEffect": "deny",
+  "rules": [
+    {
+      "id": "allow-readme",
+      "effect": "allow",
+      "reason": "The README is public project context.",
+      "tools": ["read"],
+      "paths": ["README.md"]
+    }
+  ]
+}
