@@ -1,0 +1,28 @@
+{
+  "actions": [
+    {
+      "id": "01-read-fixture",
+      "tool": "read",
+      "kind": "file.read",
+      "path": "fixtures/mixed/agentpermit.policy.json"
+    },
+    {
+      "id": "02-fetch-doc",
+      "tool": "web_fetch",
+      "kind": "network.request",
+      "url": "https://example.com/agent-policy"
+    },
+    {
+      "id": "03-write-env",
+      "tool": "write",
+      "kind": "file.write",
+      "path": ".env"
+    },
+    {
+      "id": "04-install-system",
+      "tool": "exec",
+      "kind": "command.run",
+      "command": "sudo installer -pkg thing.pkg -target /"
+    }
+  ]
+}
