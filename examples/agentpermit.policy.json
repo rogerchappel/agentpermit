@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "name": "example-agent-workflow",
+  "defaultEffect": "warn",
+  "rules": [
+    {
+      "id": "allow-doc-reads",
+      "effect": "allow",
+      "reason": "Docs are intentionally reviewable context.",
+      "kinds": ["file.read"],
+      "paths": ["docs/**", "README.md"]
+    },
+    {
+      "id": "deny-outbound-message",
+      "effect": "deny",
+      "reason": "Messages leave the machine and need human approval.",
+      "tools": ["message"],
+      "kinds": ["message.send"]
+    }
+  ]
+}

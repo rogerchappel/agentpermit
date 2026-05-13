@@ -1,0 +1,16 @@
+{
+  "actions": [
+    {
+      "id": "read-prd",
+      "tool": "read",
+      "path": "docs/PRD.md"
+    },
+    {
+      "id": "send-status",
+      "tool": "message",
+      "kind": "message.send",
+      "target": "#team",
+      "description": "Send completion update."
+    }
+  ]
+}
