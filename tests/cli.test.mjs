@@ -1,0 +1,40 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+
+const cli = path.resolve('dist/cli.js');
+
+function run(args) {
+  return spawnSync(process.execPath, [cli, ...args], { encoding: 'utf8' });
+}
+
+test('clean fixture exits zero with json totals', () => {
+  const result = run(['check', 'fixtures/clean', '--format', 'json']);
+  assert.equal(result.status, 0, result.stderr);
+  const body = JSON.parse(result.stdout);
+  assert.equal(body.ok, true);
+  assert.equal(body.totals.allow, 2);
+});
+
+test('mixed fixture exits one and prints reasons', () => {
+  const result = run(['check', 'fixtures/mixed', '--format', 'text']);
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /\[DENY\] 03-write-env/);
+  assert.match(result.stdout, /Network lookups should be reviewed/);
+});
+
+test('invalid policy exits two', () => {
+  const result = run(['check', 'fixtures/invalid']);
+  assert.equal(result.status, 2);
+  assert.match(result.stderr, /defaultEffect/);
+});
+
+test('init writes sample files without network calls', () => {
+  const target = mkdtempSync(path.join(tmpdir(), 'agentpermit-'));
+  const result = run(['init', target]);
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /Initialized AgentPermit workspace/);
+});
