@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "name": "clean-fixture-policy",
+  "defaultEffect": "warn",
+  "rules": [
+    {
+      "id": "allow-local-reads",
+      "effect": "allow",
+      "reason": "Local docs and fixture reads are safe for this simulation.",
+      "tools": ["read"],
+      "kinds": ["file.read"],
+      "paths": ["README.md", "fixtures/**", "docs/**"]
+    }
+  ]
+}
