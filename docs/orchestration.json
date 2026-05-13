@@ -1,0 +1,15 @@
+{
+  "name": "agentpermit",
+  "mode": "preflight-policy-simulator",
+  "commands": {
+    "check": "agentpermit check <workspace> --format json",
+    "explain": "agentpermit explain <workspace>",
+    "smoke": "agentpermit check fixtures/mixed --format text"
+  },
+  "exitCodes": {
+    "0": "no deny findings",
+    "1": "deny findings present",
+    "2": "invalid input or configuration"
+  },
+  "network": "none by default; only user-supplied traces may describe network actions"
+}
