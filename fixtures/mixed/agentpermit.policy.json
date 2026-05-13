@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "name": "mixed-fixture-policy",
+  "defaultEffect": "warn",
+  "rules": [
+    {
+      "id": "allow-fixture-read",
+      "effect": "allow",
+      "reason": "Fixture reads are expected.",
+      "tools": ["read"],
+      "kinds": ["file.read"],
+      "paths": ["fixtures/**"]
+    },
+    {
+      "id": "deny-env-write",
+      "effect": "deny",
+      "reason": "Environment files may contain secrets and should not be changed.",
+      "kinds": ["file.write"],
+      "paths": ["**/.env", ".env"]
+    },
+    {
+      "id": "deny-sudo",
+      "effect": "deny",
+      "reason": "Privilege escalation is outside the local simulation safety envelope.",
+      "tools": ["exec"],
+      "commands": ["sudo **"]
+    },
+    {
+      "id": "warn-web",
+      "effect": "warn",
+      "reason": "Network lookups should be reviewed before execution.",
+      "kinds": ["network.request"],
+      "urls": ["https://**"]
+    }
+  ]
+}
