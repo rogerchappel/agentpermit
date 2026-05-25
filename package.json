@@ -23,7 +23,7 @@
   "scripts": {
     "build": "tsc",
     "check": "tsc --noEmit",
-    "test": "node --test tests/*.test.mjs",
+    "test": "npm run build && node --test tests/*.test.mjs",
     "dev": "tsx src/cli.ts",
     "smoke": "npm run build && bash -c 'node dist/cli.js check fixtures/mixed --format text; test $? -eq 1' && node dist/cli.js check fixtures/clean --format json",
     "package:smoke": "npm pack --dry-run",
