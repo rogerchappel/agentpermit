@@ -10,13 +10,16 @@ reasons out, no telemetry, no hosted service, and no LLM dependency.
 ## Install
 
 ```sh
-npm install
-npm run build
+npm install agentpermit
 ```
 
-For local development, run the CLI from the built output:
+For local development:
 
 ```sh
+git clone https://github.com/rogerchappel/agentpermit.git
+cd agentpermit
+npm install
+npm run build
 node dist/cli.js --help
 ```
 
