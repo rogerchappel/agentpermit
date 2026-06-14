@@ -8,6 +8,9 @@ Required action fields:
 - `id` — stable identifier for reports.
 - `tool` — tool surface, such as `read`, `write`, `exec`, or `message`.
 
+Action ids must be unique within a trace. Duplicate ids block the run because
+they make review, audit logs, and follow-up instructions ambiguous.
+
 Optional fields include `kind`, `description`, `path`, `command`, `url`,
 `target`, and `metadata`.
 
