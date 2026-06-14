@@ -9,6 +9,7 @@ export function formatEvaluation(evaluation: Evaluation, format: OutputFormat): 
     `Result: ${evaluation.ok ? 'allowable' : 'blocked'} (${evaluation.totals.allow} allow, ${evaluation.totals.warn} warn, ${evaluation.totals.deny} deny)`,
     ''
   ];
+  for (const finding of evaluation.integrity) lines.push(formatFinding(finding), '');
   for (const finding of evaluation.findings) lines.push(formatFinding(finding), '');
   return `${lines.join('\n').trimEnd()}\n`;
 }
@@ -33,6 +34,9 @@ export function formatExplain(evaluation: Evaluation): string {
     '| --- | --- | --- | --- |'
   ];
   for (const finding of evaluation.findings) {
+    lines.push(`| ${finding.effect} | ${finding.actionId} | ${finding.ruleId} | ${escapeTable(finding.reason)} |`);
+  }
+  for (const finding of evaluation.integrity) {
     lines.push(`| ${finding.effect} | ${finding.actionId} | ${finding.ruleId} | ${escapeTable(finding.reason)} |`);
   }
   return `${lines.join('\n')}\n`;
