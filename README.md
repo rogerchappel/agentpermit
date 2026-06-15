@@ -117,3 +117,12 @@ Small, fixture-backed changes are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md
 ## License
 
 MIT
+
+## Release Verification
+
+Before publishing or tagging a release, run the local verification path that matches CI:
+
+- `npm run release:check`
+- `npm run package:smoke`
+
+The release checklist in `docs/release-readiness.md` captures the package surface, CLI bins, and reviewer notes for future release PRs.
