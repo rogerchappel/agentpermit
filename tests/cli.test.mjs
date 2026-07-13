@@ -19,6 +19,16 @@ test('clean fixture exits zero with json totals', () => {
   assert.equal(body.totals.allow, 2);
 });
 
+test('help and version flags exit successfully', () => {
+  const help = run(['--help']);
+  assert.equal(help.status, 0, help.stderr);
+  assert.match(help.stdout, /Usage: agentpermit/);
+
+  const version = run(['--version']);
+  assert.equal(version.status, 0, version.stderr);
+  assert.match(version.stdout, /^0\.1\.0/);
+});
+
 test('mixed fixture exits one and prints reasons', () => {
   const result = run(['check', 'fixtures/mixed', '--format', 'text']);
   assert.equal(result.status, 1);
