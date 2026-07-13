@@ -74,6 +74,9 @@ try {
     process.exit(2);
   }
   if (error && typeof error === 'object' && 'code' in error && String(error.code).startsWith('commander.')) {
+    if (error.code === 'commander.helpDisplayed' || error.code === 'commander.version') {
+      process.exit(0);
+    }
     process.exit(2);
   }
   throw error;
