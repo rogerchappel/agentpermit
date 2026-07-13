@@ -16,8 +16,14 @@
   },
   "files": [
     "dist",
+    "docs",
     "examples",
     "README.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CODE_OF_CONDUCT.md",
+    "ROADMAP.md",
     "LICENSE"
   ],
   "scripts": {
