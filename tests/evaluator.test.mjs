@@ -35,3 +35,15 @@ test('uses strongest matching rule when multiple rules match', () => {
   assert.equal(result.findings[0].effect, 'deny');
   assert.equal(result.findings[0].ruleId, 'deny-env');
 });
+
+test('blocks traces with duplicate action ids', () => {
+  const result = evaluate(policy, [
+    { id: 'same', tool: 'read', kind: 'file.read', path: 'docs/one.md' },
+    { id: 'same', tool: 'read', kind: 'file.read', path: 'docs/two.md' }
+  ]);
+
+  assert.equal(result.ok, false);
+  assert.equal(result.integrity.length, 1);
+  assert.equal(result.integrity[0].ruleId, 'trace.duplicateActionId');
+  assert.deepEqual(result.integrity[0].evidence, ['actionId=same', 'count=2']);
+});

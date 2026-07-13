@@ -6,12 +6,14 @@ const severityRank: Record<Severity, number> = { allow: 0, warn: 1, deny: 2 };
 
 export function evaluate(policy: Policy, actions: ProposedAction[]): Evaluation {
   const findings = actions.map((action) => evaluateAction(policy, action));
+  const integrity = integrityFindings(actions);
   const totals: Record<Severity, number> = { allow: 0, warn: 0, deny: 0 };
   for (const finding of findings) totals[finding.effect] += 1;
   return {
-    ok: totals.deny === 0,
+    ok: totals.deny === 0 && integrity.every((finding) => finding.effect !== 'deny'),
     policy: policy.name,
     totals,
+    integrity,
     findings: findings.sort((left, right) => left.actionId.localeCompare(right.actionId))
   };
 }
@@ -64,4 +66,21 @@ function evidenceFor(action: ProposedAction): string[] {
     action.url ? `url=${action.url}` : undefined,
     action.target ? `target=${action.target}` : undefined
   ].filter((item): item is string => Boolean(item));
+}
+
+function integrityFindings(actions: ProposedAction[]): Finding[] {
+  const seen = new Map<string, number>();
+  for (const action of actions) seen.set(action.id, (seen.get(action.id) ?? 0) + 1);
+  return [...seen.entries()]
+    .filter(([, count]) => count > 1)
+    .map(([actionId, count]) => ({
+      actionId,
+      tool: 'trace',
+      kind: 'integrity',
+      effect: 'deny' as const,
+      ruleId: 'trace.duplicateActionId',
+      reason: 'Trace action ids must be unique so decisions can be reviewed unambiguously.',
+      evidence: [`actionId=${actionId}`, `count=${count}`]
+    }))
+    .sort((left, right) => left.actionId.localeCompare(right.actionId));
 }

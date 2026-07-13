@@ -56,6 +56,7 @@ export type Evaluation = {
   ok: boolean;
   policy: string;
   totals: Record<Severity, number>;
+  integrity: Finding[];
   findings: Finding[];
 };
 
