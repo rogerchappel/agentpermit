@@ -38,7 +38,7 @@ jobs:
       - name: Run release checks
         run: npm run release:check
       - name: Build package
-        run: npm pack
+        run: npm pack --access public
       - name: Generate release notes
         run: node /tmp/releasebox/bin/releasebox.js notes . > RELEASE_NOTES.md
       - name: Create GitHub release
