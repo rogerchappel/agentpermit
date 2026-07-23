@@ -4,7 +4,7 @@ Use this checklist before cutting a release or asking a reviewer to trust the pa
 
 ## Public Package Surface
 
-- Package: `agentpermit`
+- Package: `@rogerchappel/agentpermit` (public npm package)
 - Repository: `https://github.com/rogerchappel/agentpermit`
 - Published files are controlled by the `files` allowlist in `package.json`.
 
@@ -18,7 +18,8 @@ Use this checklist before cutting a release or asking a reviewer to trust the pa
 - `npm run test`: `npm run build && node --test tests/*.test.mjs`
 - `npm run build`: `tsc`
 - `npm run smoke`: `npm run build && bash -c 'node dist/cli.js check fixtures/mixed --format text; test $? -eq 1' && node dist/cli.js check fixtures/clean --format json`
-- `npm run package:smoke`: `npm pack --dry-run`
+- `npm run package:smoke`: pack the tarball, install it in a temporary prefix,
+  and run the installed `agentpermit --help`
 - `npm run release:check`: `npm test && npm run check && npm run build && npm run smoke && npm run package:smoke`
 
 Run `npm run release:check` when available before opening a release PR. When a command is unavailable, use the closest listed command and record the reason in the PR.
@@ -26,5 +27,7 @@ Run `npm run release:check` when available before opening a release PR. When a c
 ## Reviewer Notes
 
 - Confirm README examples still match the CLI or module exports.
+- Confirm package metadata and install docs still use
+  `@rogerchappel/agentpermit`; the unscoped npm name belongs to another project.
 - Confirm `npm pack --dry-run` does not include local fixtures, generated logs, or build caches beyond the intended allowlist.
 - Confirm GitHub Actions runs the same install and package smoke path used locally.

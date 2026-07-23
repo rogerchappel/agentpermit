@@ -10,8 +10,11 @@ reasons out, no telemetry, no hosted service, and no LLM dependency.
 ## Install
 
 ```sh
-npm install agentpermit
+npm install @rogerchappel/agentpermit
 ```
+
+The npm package is scoped to the maintainer. The installed executable remains
+`agentpermit`.
 
 For local development:
 
