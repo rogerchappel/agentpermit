@@ -1,5 +1,5 @@
 {
-  "name": "agentpermit",
+  "name": "@rogerchappel/agentpermit",
   "version": "0.1.0",
   "description": "Local policy simulator for agent tool permissions.",
   "type": "module",
@@ -48,6 +48,9 @@
   ],
   "author": "Roger Chappel",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=20"
   },
