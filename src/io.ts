@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, open, readFile, unlink, type FileHandle } from 'node:fs/promises';
 import path from 'node:path';
 import { AgentPermitError } from './errors.js';
 import { defaultPolicy } from './defaultPolicy.js';
@@ -30,9 +30,35 @@ export async function writeInitFiles(targetInput: string): Promise<{ target: str
   await mkdir(target, { recursive: true });
   const policyPath = path.join(target, policyFileName);
   const tracePath = path.join(target, traceFileName);
-  await writeFile(policyPath, `${JSON.stringify(defaultPolicy, null, 2)}\n`, { flag: 'wx' });
-  await writeFile(tracePath, `${JSON.stringify(sampleTrace(), null, 2)}\n`, { flag: 'wx' });
-  return { target, files: [policyPath, tracePath] };
+  const handles: Array<{ handle: FileHandle; filePath: string }> = [];
+  let collisionFile = policyFileName;
+  let initialized = false;
+
+  try {
+    const policyHandle = await open(policyPath, 'wx');
+    handles.push({ handle: policyHandle, filePath: policyPath });
+    collisionFile = traceFileName;
+    const traceHandle = await open(tracePath, 'wx');
+    handles.push({ handle: traceHandle, filePath: tracePath });
+    await policyHandle.writeFile(`${JSON.stringify(defaultPolicy, null, 2)}\n`);
+    await traceHandle.writeFile(`${JSON.stringify(sampleTrace(), null, 2)}\n`);
+    initialized = true;
+    return { target, files: [policyPath, tracePath] };
+  } catch (error) {
+    if (isFileExistsError(error)) {
+      throw new AgentPermitError(`Refusing to initialize: ${collisionFile} already exists`);
+    }
+    throw error;
+  } finally {
+    await Promise.allSettled(handles.map(({ handle }) => handle.close()));
+    if (!initialized) {
+      await Promise.allSettled(handles.map(({ filePath }) => unlink(filePath)));
+    }
+  }
+}
+
+function isFileExistsError(error: unknown): boolean {
+  return Boolean(error && typeof error === 'object' && 'code' in error && error.code === 'EEXIST');
 }
 
 async function readJson(filePath: string): Promise<unknown> {

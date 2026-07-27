@@ -79,7 +79,9 @@ A workspace contains two files:
 
 ## Commands
 
-- `agentpermit init [target]` writes a starter policy and trace.
+- `agentpermit init [target]` writes a starter policy and trace. If either
+  destination file already exists, it exits with code 2 without changing the
+  directory.
 - `agentpermit check [workspace] --format text|json` evaluates a trace.
 - `agentpermit explain [workspace]` prints a markdown explanation table.
 - `agentpermit report [workspace]` emits JSON for automation.
@@ -88,7 +90,8 @@ Exit codes:
 
 - `0` — no deny findings.
 - `1` — one or more deny findings.
-- `2` — invalid input, missing files, or invalid configuration.
+- `2` — invalid input, missing files, invalid configuration, or an `init`
+  destination collision.
 
 ## Rule matching
 

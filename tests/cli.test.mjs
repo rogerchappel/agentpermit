@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync } from 'node:fs';
+import { mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
@@ -47,4 +47,24 @@ test('init writes sample files without network calls', () => {
   const result = run(['init', target]);
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /Initialized AgentPermit workspace/);
+  assert.deepEqual(readdirSync(target).sort(), ['agentpermit.policy.json', 'agentpermit.trace.json']);
+  assert.doesNotThrow(() => JSON.parse(readFileSync(path.join(target, 'agentpermit.policy.json'), 'utf8')));
+  assert.doesNotThrow(() => JSON.parse(readFileSync(path.join(target, 'agentpermit.trace.json'), 'utf8')));
 });
+
+for (const existingFile of ['agentpermit.policy.json', 'agentpermit.trace.json']) {
+  test(`init leaves the directory unchanged when ${existingFile} exists`, () => {
+    const target = mkdtempSync(path.join(tmpdir(), 'agentpermit-'));
+    const existingContents = '{"sentinel":true}\n';
+    writeFileSync(path.join(target, existingFile), existingContents);
+
+    const result = run(['init', target]);
+
+    assert.equal(result.status, 2);
+    assert.equal(result.stdout, '');
+    assert.match(result.stderr, new RegExp(`^agentpermit: Refusing to initialize: ${existingFile} already exists\\n$`));
+    assert.doesNotMatch(result.stderr, /\n\s+at /);
+    assert.deepEqual(readdirSync(target), [existingFile]);
+    assert.equal(readFileSync(path.join(target, existingFile), 'utf8'), existingContents);
+  });
+}
