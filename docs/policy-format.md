@@ -16,4 +16,7 @@ Supported matchers:
 - `urls`
 - `targets`
 
-Use `*` for a single wildcard and `**` for broad matching.
+Use `*` for a wildcard that does not cross `/` and `**` for broad matching that
+can cross `/`. Separators next to wildcards remain required: `**/.env` matches
+`nested/.env`, not the root-level `.env`, so list both patterns when both forms
+should match.
