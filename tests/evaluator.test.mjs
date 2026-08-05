@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { evaluate } from '../dist/index.js';
+import { defaultPolicy, evaluate } from '../dist/index.js';
 
 const policy = {
   version: 1,
@@ -34,6 +34,36 @@ test('uses strongest matching rule when multiple rules match', () => {
 
   assert.equal(result.findings[0].effect, 'deny');
   assert.equal(result.findings[0].ruleId, 'deny-env');
+});
+
+test('default policy denies root and nested dotenv files for reads and writes', () => {
+  const paths = ['.env', '.env.local', 'nested/.env', 'nested/.env.local'];
+  const actions = ['read', 'write'].flatMap((tool) => paths.map((path) => ({
+    id: `${tool}-${path}`,
+    tool,
+    kind: `file.${tool}`,
+    path
+  })));
+
+  const result = evaluate(defaultPolicy, [
+    ...actions,
+    { id: 'read-source', tool: 'read', kind: 'file.read', path: 'src/index.ts' },
+    { id: 'write-output', tool: 'write', kind: 'file.write', path: 'dist/output.js' }
+  ]);
+
+  for (const path of paths) {
+    for (const tool of ['read', 'write']) {
+      const finding = result.findings.find(({ actionId }) => actionId === `${tool}-${path}`);
+      assert.equal(finding?.effect, 'deny');
+      assert.equal(finding?.ruleId, 'deny-secret-files');
+    }
+  }
+
+  for (const actionId of ['read-source', 'write-output']) {
+    const finding = result.findings.find((candidate) => candidate.actionId === actionId);
+    assert.equal(finding?.effect, 'warn');
+    assert.equal(finding?.ruleId, 'default');
+  }
 });
 
 test('blocks traces with duplicate action ids', () => {

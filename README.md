@@ -97,8 +97,10 @@ Exit codes:
 
 Rules can match by `tools`, `kinds`, `paths`, `commands`, `urls`, and `targets`.
 Patterns support `*` for one path segment-ish wildcard and `**` for broad glob
-matching. If multiple rules match, the strongest effect wins: deny > warn >
-allow. Ties are sorted by rule id for stability.
+matching. Wildcards do not make adjacent separators optional, so use both
+`.env` and `**/.env` when a rule must cover the root and nested paths. If
+multiple rules match, the strongest effect wins: deny > warn > allow. Ties are
+sorted by rule id for stability.
 
 ## Verify
 

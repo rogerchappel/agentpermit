@@ -18,7 +18,7 @@ export const defaultPolicy: Policy = {
       effect: 'deny',
       reason: 'Secret-bearing files must not be read or written by default.',
       kinds: ['file.read', 'file.write'],
-      paths: ['**/.env', '**/.env.*', '**/*secret*', '**/*token*']
+      paths: ['.env', '.env.*', '**/.env', '**/.env.*', '**/*secret*', '**/*token*']
     },
     {
       id: 'deny-destructive-shell',
