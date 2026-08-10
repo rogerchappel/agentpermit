@@ -2,11 +2,17 @@
 
 Use this checklist before cutting a release or asking a reviewer to trust the package contents.
 
-## Public Package Surface
+## Package Surface
 
-- Package: `@rogerchappel/agentpermit` (public npm package)
+- Intended public package: `@rogerchappel/agentpermit`
+- Current registry state: unpublished. The machine-checkable source of truth is
+  [`publication-state.json`](publication-state.json).
 - Repository: `https://github.com/rogerchappel/agentpermit`
 - Published files are controlled by the `files` allowlist in `package.json`.
+
+Until publication, follow the source-development install in the README and run
+`npm run package:smoke` to build, pack, install, and execute the inspected local
+artifact.
 
 ## CLI Surface
 
@@ -20,7 +26,9 @@ Use this checklist before cutting a release or asking a reviewer to trust the pa
 - `npm run smoke`: `npm run build && bash -c 'node dist/cli.js check fixtures/mixed --format text; test $? -eq 1' && node dist/cli.js check fixtures/clean --format json`
 - `npm run package:smoke`: pack the tarball, install it in a temporary prefix,
   and run the installed `agentpermit --help`
-- `npm run release:check`: `npm test && npm run check && npm run build && npm run smoke && npm run package:smoke`
+- `npm run docs:check`: ensure install guidance agrees with the publication state
+- `npm run release:check`: tests, type checks, documentation state, build, CLI
+  smoke tests, and package smoke tests
 
 Run `npm run release:check` when available before opening a release PR. When a command is unavailable, use the closest listed command and record the reason in the PR.
 

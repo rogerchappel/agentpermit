@@ -33,7 +33,8 @@
     "dev": "tsx src/cli.ts",
     "smoke": "npm run build && bash -c 'node dist/cli.js check fixtures/mixed --format text; test $? -eq 1' && node dist/cli.js check fixtures/clean --format json",
     "package:smoke": "bash scripts/package-smoke.sh",
-    "release:check": "npm test && npm run check && npm run build && npm run smoke && npm run package:smoke",
+    "docs:check": "node scripts/check-publication-docs.mjs",
+    "release:check": "npm test && npm run check && npm run docs:check && npm run build && npm run smoke && npm run package:smoke",
     "prepack": "npm run build",
     "lint": "npm run check"
   },
