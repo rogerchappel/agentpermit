@@ -4,6 +4,9 @@ import test from 'node:test';
 
 const manifest = JSON.parse(await readFile(new URL('../package.json', import.meta.url)));
 const readme = await readFile(new URL('../README.md', import.meta.url), 'utf8');
+const publicationState = JSON.parse(
+  await readFile(new URL('../docs/publication-state.json', import.meta.url), 'utf8'),
+);
 const releaseWorkflow = await readFile(
   new URL('../.github/workflows/release.yml', import.meta.url),
   'utf8',
@@ -16,8 +19,20 @@ test('release metadata uses the maintainer scope and retains the CLI name', () =
 });
 
 test('installation docs cannot resolve to the unrelated unscoped package', () => {
-  assert.match(readme, /npm install @rogerchappel\/agentpermit/);
+  assert.equal(publicationState.npm.package, '@rogerchappel/agentpermit');
+  assert.equal(publicationState.npm.published, false);
+  assert.doesNotMatch(readme, /npm install @rogerchappel\/agentpermit/);
   assert.doesNotMatch(readme, /npm install(?: --\S+)* agentpermit(?:\s|$)/m);
+});
+
+test('tag releases install a trusted-publishing npm CLI before dependencies', () => {
+  assert.match(releaseWorkflow, /NPM_VERSION: 11\.5\.1/);
+  assert.match(releaseWorkflow, /npm install --global "npm@\$NPM_VERSION"/);
+  assert.match(releaseWorkflow, /major > 11 \|\| \(major === 11 && minor >= 5\)/);
+
+  const npmCli = releaseWorkflow.indexOf('npm install --global "npm@$NPM_VERSION"');
+  const dependencies = releaseWorkflow.indexOf('run: npm ci');
+  assert.ok(npmCli < dependencies, 'publishing npm CLI must be installed before npm ci');
 });
 
 test('tag releases publish the exact inspected tarball before announcing it', () => {
