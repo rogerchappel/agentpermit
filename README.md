@@ -9,22 +9,25 @@ reasons out, no telemetry, no hosted service, and no LLM dependency.
 
 ## Install
 
-```sh
-npm install @rogerchappel/agentpermit
-```
+`@rogerchappel/agentpermit` is not yet published to npm. Until its first
+publication, use the verified source-development path below; do not expect a
+registry install to resolve.
 
-The npm package is scoped to the maintainer. The installed executable remains
-`agentpermit`.
-
-For local development:
+Clone the repository, install its locked dependencies, run the package smoke
+test, and build the CLI:
 
 ```sh
 git clone https://github.com/rogerchappel/agentpermit.git
 cd agentpermit
-npm install
+npm ci
+npm run package:smoke
 npm run build
 node dist/cli.js --help
 ```
+
+Publication status is recorded in
+[`docs/publication-state.json`](docs/publication-state.json) and checked by
+`npm run docs:check`.
 
 ## Quick start
 
