@@ -34,12 +34,16 @@ export function formatExplain(evaluation: Evaluation): string {
     '| --- | --- | --- | --- |'
   ];
   for (const finding of evaluation.findings) {
-    lines.push(`| ${finding.effect} | ${finding.actionId} | ${finding.ruleId} | ${escapeTable(finding.reason)} |`);
+    lines.push(formatExplainRow(finding));
   }
   for (const finding of evaluation.integrity) {
-    lines.push(`| ${finding.effect} | ${finding.actionId} | ${finding.ruleId} | ${escapeTable(finding.reason)} |`);
+    lines.push(formatExplainRow(finding));
   }
   return `${lines.join('\n')}\n`;
+}
+
+function formatExplainRow(finding: Finding): string {
+  return `| ${[finding.effect, finding.actionId, finding.ruleId, finding.reason].map(escapeTable).join(' | ')} |`;
 }
 
 function escapeTable(value: string): string {
