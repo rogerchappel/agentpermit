@@ -19,7 +19,7 @@ const npmBranches = lines
     return lines.slice(elseIndex + 1, endIndex);
   });
 
-assert.equal(npmBranches.length, 2, 'expected package-lock and no-lock npm branches');
+assert.equal(npmBranches.length, 1, 'expected only the package-lock npm branch');
 for (const [index, fallback] of npmBranches.entries()) {
   const commands = fallback
     .map((line) => line.trim())
