@@ -18,7 +18,9 @@ export function checkWorkflow(source) {
     .filter(({ line }) => line === 'npm ci' || line === 'npm install')
     .map(({ index }) => {
       const elseIndex = lines.findIndex((line, candidate) => candidate > index && line === '            else');
+      assert.notEqual(elseIndex, -1, 'expected npm fallback else branch');
       const endIndex = lines.findIndex((line, candidate) => candidate > elseIndex && line === '            fi');
+      assert.notEqual(endIndex, -1, 'expected npm fallback closing fi');
       return lines.slice(elseIndex + 1, endIndex);
     });
 

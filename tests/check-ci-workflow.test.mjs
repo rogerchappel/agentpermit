@@ -35,3 +35,8 @@ test('CI npm fallback rejects duplicate commands', () => {
 test('CI npm fallback rejects changed commands', () => {
   assert.throws(() => checkWorkflow(withNpmBranch(npmBranch.replace('npm test --if-present', 'npm test'))));
 });
+
+test('CI npm fallback rejects a missing closing fi', () => {
+  const malformed = withNpmBranch(npmBranch.replace('            fi\n', ''));
+  assert.throws(() => checkWorkflow(malformed), /expected npm fallback closing fi/);
+});
