@@ -62,6 +62,7 @@ jobs:
             pnpm install --frozen-lockfile
             if node -e "process.exit(require('./package.json').scripts?.['release:check'] ? 0 : 1)"; then
               pnpm run release:check
+              pnpm run ci:check --if-present
             else
               pnpm run check --if-present
               pnpm test --if-present
@@ -73,6 +74,7 @@ jobs:
             npm ci
             if node -e "process.exit(require('./package.json').scripts?.['release:check'] ? 0 : 1)"; then
               npm run release:check
+              npm run ci:check --if-present
             else
               npm run check --if-present
               npm test --if-present
