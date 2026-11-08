@@ -25,6 +25,11 @@ export function checkWorkflow(source) {
     });
 
   assert.equal(npmBranches.length, 1, 'expected only the package-lock npm branch');
+
+  for (const [manager, command] of [['pnpm', 'pnpm run release:check'], ['npm', 'npm run release:check']]) {
+    assert.ok(workflow.includes(`${command}\n              ${manager} run ci:check --if-present`),
+      `expected ci:check after ${command}`);
+  }
   for (const [index, fallback] of npmBranches.entries()) {
     const commands = fallback
       .map((line) => line.trim())
