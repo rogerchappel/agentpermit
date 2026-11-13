@@ -1,3 +1,5 @@
+export { parsePolicyJson, parseTraceJson } from './schema.js';
+export { inferKind, normalizeAction, normalizePath } from './normalize.js';
 export { defaultPolicy } from './defaultPolicy.js';
 export { evaluate, evaluateAction } from './evaluator.js';
 export { formatEvaluation, formatExplain } from './format.js';
