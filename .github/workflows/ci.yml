@@ -19,6 +19,9 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v7
 
+      - name: Validate shell syntax
+        run: bash scripts/check-shell-syntax.sh
+
       - name: Validate required project files
         run: |
           set -euo pipefail
