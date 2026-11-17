@@ -25,6 +25,8 @@ export function checkWorkflow(source) {
     });
 
   assert.equal(npmBranches.length, 1, 'expected only the package-lock npm branch');
+  assert.match(workflow, /- name: Validate shell syntax\n        run: bash scripts\/check-shell-syntax\.sh/,
+    'expected CI to validate shell syntax');
 
   for (const [manager, command] of [['pnpm', 'pnpm run release:check'], ['npm', 'npm run release:check']]) {
     assert.ok(workflow.includes(`${command}\n              ${manager} run ci:check --if-present`),

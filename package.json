@@ -35,7 +35,8 @@
     "package:smoke": "bash scripts/package-smoke.sh",
     "docs:check": "node scripts/check-publication-docs.mjs",
     "ci:check": "node scripts/check-ci-workflow.mjs",
-    "release:check": "npm test && npm run check && npm run docs:check && npm run ci:check && npm run build && npm run smoke && npm run package:smoke",
+    "shell:check": "bash scripts/check-shell-syntax.sh",
+    "release:check": "npm test && npm run check && npm run docs:check && npm run ci:check && npm run shell:check && npm run build && npm run smoke && npm run package:smoke",
     "prepack": "npm run build",
     "lint": "npm run check"
   },
