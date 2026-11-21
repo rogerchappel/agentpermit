@@ -25,9 +25,9 @@ export async function readTrace(filePath: string): Promise<ProposedAction[]> {
   return parseTraceJson(await readJson(filePath), filePath);
 }
 
-export async function writeInitFiles(targetInput: string): Promise<{ target: string; files: string[] }> {
+export async function writeInitFiles(targetInput: string, filesystem = { mkdir, open, unlink }): Promise<{ target: string; files: string[] }> {
   const target = path.resolve(targetInput);
-  await mkdir(target, { recursive: true });
+  await filesystem.mkdir(target, { recursive: true });
   const policyPath = path.join(target, policyFileName);
   const tracePath = path.join(target, traceFileName);
   const handles: Array<{ handle: FileHandle; filePath: string }> = [];
@@ -35,10 +35,10 @@ export async function writeInitFiles(targetInput: string): Promise<{ target: str
   let initialized = false;
 
   try {
-    const policyHandle = await open(policyPath, 'wx');
+    const policyHandle = await filesystem.open(policyPath, 'wx');
     handles.push({ handle: policyHandle, filePath: policyPath });
     collisionFile = traceFileName;
-    const traceHandle = await open(tracePath, 'wx');
+    const traceHandle = await filesystem.open(tracePath, 'wx');
     handles.push({ handle: traceHandle, filePath: tracePath });
     await policyHandle.writeFile(`${JSON.stringify(defaultPolicy, null, 2)}\n`);
     await traceHandle.writeFile(`${JSON.stringify(sampleTrace(), null, 2)}\n`);
@@ -52,7 +52,7 @@ export async function writeInitFiles(targetInput: string): Promise<{ target: str
   } finally {
     await Promise.allSettled(handles.map(({ handle }) => handle.close()));
     if (!initialized) {
-      await Promise.allSettled(handles.map(({ filePath }) => unlink(filePath)));
+      await Promise.allSettled(handles.map(({ filePath }) => filesystem.unlink(filePath)));
     }
   }
 }

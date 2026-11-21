@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { writeInitFiles, policyFileName, traceFileName } from '../dist/io.js';
 
 const cli = path.resolve('dist/cli.js');
 
@@ -50,6 +51,29 @@ test('init writes sample files without network calls', () => {
   assert.deepEqual(readdirSync(target).sort(), ['agentpermit.policy.json', 'agentpermit.trace.json']);
   assert.doesNotThrow(() => JSON.parse(readFileSync(path.join(target, 'agentpermit.policy.json'), 'utf8')));
   assert.doesNotThrow(() => JSON.parse(readFileSync(path.join(target, 'agentpermit.trace.json'), 'utf8')));
+});
+
+test('init removes only files created by this call after a partial write failure', async () => {
+  const target = mkdtempSync(path.join(tmpdir(), 'agentpermit-'));
+  const original = '{"preserve":true}\n';
+  writeFileSync(path.join(target, traceFileName), original);
+  const filesystem = {
+    mkdir: async () => {},
+    open: async (file, flags) => {
+      if (file.endsWith(traceFileName)) {
+        const error = new Error('already exists');
+        error.code = 'EEXIST';
+        throw error;
+      }
+      const { open } = await import('node:fs/promises');
+      return open(file, flags);
+    },
+    unlink: async (file) => (await import('node:fs/promises')).unlink(file)
+  };
+  await assert.rejects(writeInitFiles(target, filesystem), /trace.json already exists/);
+  assert.deepEqual(readdirSync(target), [traceFileName]);
+  assert.equal(readFileSync(path.join(target, traceFileName), 'utf8'), original);
+  assert.equal(readdirSync(target).includes(policyFileName), false);
 });
 
 for (const existingFile of ['agentpermit.policy.json', 'agentpermit.trace.json']) {
