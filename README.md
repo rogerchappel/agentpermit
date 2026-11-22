@@ -99,11 +99,14 @@ Exit codes:
 ## Rule matching
 
 Rules can match by `tools`, `kinds`, `paths`, `commands`, `urls`, and `targets`.
-Patterns support `*` for one path segment-ish wildcard and `**` for broad glob
-matching. Wildcards do not make adjacent separators optional, so use both
-`.env` and `**/.env` when a rule must cover the root and nested paths. If
-multiple rules match, the strongest effect wins: deny > warn > allow. Ties are
-sorted by rule id for stability.
+Path patterns use `/` as the separator (backslashes are normalized to `/`).
+`*` matches zero or more characters within one segment, `**` matches across
+separators, and `?` matches exactly one character within a segment. Brackets
+(`[` and `]`) are literal characters; character classes and brace expansion are
+not supported. Patterns match the complete path. Wildcards do not make adjacent
+separators optional, so use both `.env` and `**/.env` when a rule must cover the
+root and nested paths. If multiple rules match, the strongest effect wins:
+deny > warn > allow. Ties are sorted by rule id for stability.
 
 ## Verify
 

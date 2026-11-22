@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { defaultPolicy, evaluate } from '../dist/index.js';
+import { globToRegExp } from '../dist/match.js';
 
 const policy = {
   version: 1,
@@ -64,6 +65,19 @@ test('default policy denies root and nested dotenv files for reads and writes', 
     assert.equal(finding?.effect, 'warn');
     assert.equal(finding?.ruleId, 'default');
   }
+});
+
+test('path glob grammar supports star, double-star, and single-character question marks', () => {
+  assert.equal(globToRegExp('src/*.ts').test('src/main.ts'), true);
+  assert.equal(globToRegExp('src/*.ts').test('src/nested/main.ts'), false);
+  assert.equal(globToRegExp('src/**').test('src/nested/main.ts'), true);
+  assert.equal(globToRegExp('file?.txt').test('file1.txt'), true);
+  assert.equal(globToRegExp('file?.txt').test('file12.txt'), false);
+});
+
+test('brackets in path patterns are literal, not character classes', () => {
+  assert.equal(globToRegExp('src/[ab].ts').test('src/[ab].ts'), true);
+  assert.equal(globToRegExp('src/[ab].ts').test('src/a.ts'), false);
 });
 
 test('blocks traces with duplicate action ids', () => {

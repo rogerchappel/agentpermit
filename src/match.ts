@@ -13,6 +13,11 @@ export function globToRegExp(pattern: string): RegExp {
       index += 1;
     } else if (char === '*') {
       body += '[^/]*';
+    } else if (char === '?') {
+      body += '[^/]';
+    } else if (char === '[' || char === ']') {
+      // Character classes are intentionally unsupported; treat brackets literally.
+      body += `\\${char}`;
     } else {
       body += escapeRegex(char ?? '');
     }
