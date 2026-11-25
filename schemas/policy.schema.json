@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/rogerchappel/agentpermit/blob/main/schemas/policy.schema.json",
+  "title": "AgentPermit policy",
+  "description": "Version 1 policy accepted by AgentPermit.",
+  "type": "object",
+  "required": ["version", "name", "defaultEffect", "rules"],
+  "properties": {
+    "version": { "const": 1 },
+    "name": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "defaultEffect": { "$ref": "#/$defs/effect" },
+    "rules": { "type": "array", "items": { "$ref": "#/$defs/rule" } }
+  },
+  "$defs": {
+    "effect": { "enum": ["allow", "warn", "deny"] },
+    "stringList": { "type": "array", "items": { "type": "string" } },
+    "rule": {
+      "type": "object",
+      "required": ["id", "effect", "reason"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "effect": { "$ref": "#/$defs/effect" },
+        "reason": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "tools": { "$ref": "#/$defs/stringList" },
+        "kinds": { "$ref": "#/$defs/stringList" },
+        "paths": { "$ref": "#/$defs/stringList" },
+        "commands": { "$ref": "#/$defs/stringList" },
+        "urls": { "$ref": "#/$defs/stringList" },
+        "targets": { "$ref": "#/$defs/stringList" }
+      }
+    }
+  }
+}
