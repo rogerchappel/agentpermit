@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/rogerchappel/agentpermit/blob/main/schemas/trace.schema.json",
+  "title": "AgentPermit trace",
+  "description": "Trace of proposed actions accepted by AgentPermit.",
+  "type": "object",
+  "required": ["actions"],
+  "properties": {
+    "actions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/action" }
+    }
+  },
+  "$defs": {
+    "action": {
+      "type": "object",
+      "required": ["id", "tool"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "tool": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "kind": { "type": "string" },
+        "description": { "type": "string" },
+        "path": { "type": "string" },
+        "command": { "type": "string" },
+        "url": { "type": "string" },
+        "target": { "type": "string" },
+        "metadata": { "type": "object" }
+      }
+    }
+  }
+}
