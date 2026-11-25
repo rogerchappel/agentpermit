@@ -43,6 +43,8 @@ A workspace contains two files:
 - `agentpermit.policy.json` — ordered allow/warn/deny rules.
 - `agentpermit.trace.json` — proposed actions from an agent or fixture.
 
+JSON Schemas for editor validation are provided in [`schemas/policy.schema.json`](schemas/policy.schema.json) and [`schemas/trace.schema.json`](schemas/trace.schema.json). To validate files locally, run `npm test`; the schema tests check repository fixtures and reject malformed policy and trace structures. See [schema validation details](docs/README.md#json-schema-validation).
+
 ## Example trace
 
 ```json
