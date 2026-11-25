@@ -1,7 +1,10 @@
 # Trace format
 
 `agentpermit.trace.json` is a list of proposed actions. These actions describe
-what another agent or tool wants to do; AgentPermit never executes them.
+what another agent or tool wants to do; AgentPermit never executes them. The
+Draft 2020-12 editor schema is
+[`../schemas/trace.schema.json`](../schemas/trace.schema.json); see
+[validation instructions](README.md#json-schema-validation).
 
 Required action fields:
 

@@ -1,7 +1,9 @@
 # Policy format
 
 `agentpermit.policy.json` contains a version, a name, a default effect, and a
-list of rules.
+list of rules. The Draft 2020-12 editor schema is
+[`../schemas/policy.schema.json`](../schemas/policy.schema.json); see
+[validation instructions](README.md#json-schema-validation).
 
 ## Versioning and compatibility
 
