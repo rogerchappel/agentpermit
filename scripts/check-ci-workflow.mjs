@@ -13,16 +13,33 @@ export function checkWorkflow(source) {
     'npm run package:smoke --if-present',
   ];
   const lines = source.split('\n');
-  const npmBranches = lines
+  const npmBranches = [];
+  const npmInstallIndexes = lines
     .map((line, index) => ({ line: line.trim(), index }))
     .filter(({ line }) => line === 'npm ci' || line === 'npm install')
-    .map(({ index }) => {
-      const elseIndex = lines.findIndex((line, candidate) => candidate > index && line === '            else');
+    .map(({ index }) => index);
+  assert.equal(npmInstallIndexes.length, 1, 'expected only the package-lock npm branch');
+
+  const installIndex = npmInstallIndexes[0];
+  let elseIndex = -1;
+  let endIndex = -1;
+  for (let index = installIndex + 1; index < lines.length; index += 1) {
+    if (lines[index] === '            elif [ -f yarn.lock ]; then'
+      || lines[index] === '            elif [ -f pnpm-lock.yaml ]; then') break;
+    if (lines[index] === '            else') {
+      assert.equal(elseIndex, -1, 'unexpected additional npm fallback else branch');
+      elseIndex = index;
+      continue;
+    }
+    if (lines[index] === '            fi') {
       assert.notEqual(elseIndex, -1, 'expected npm fallback else branch');
-      const endIndex = lines.findIndex((line, candidate) => candidate > elseIndex && line === '            fi');
-      assert.notEqual(endIndex, -1, 'expected npm fallback closing fi');
-      return lines.slice(elseIndex + 1, endIndex);
-    });
+      endIndex = index;
+      break;
+    }
+  }
+  assert.notEqual(elseIndex, -1, 'expected npm fallback else branch');
+  assert.notEqual(endIndex, -1, 'expected npm fallback closing fi');
+  npmBranches.push(lines.slice(elseIndex + 1, endIndex));
 
   assert.equal(npmBranches.length, 1, 'expected only the package-lock npm branch');
   assert.match(workflow, /- name: Validate shell syntax\n        run: bash scripts\/check-shell-syntax\.sh/,

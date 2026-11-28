@@ -40,3 +40,24 @@ test('CI npm fallback rejects a missing closing fi', () => {
   const malformed = withNpmBranch(npmBranch.replace('            fi\n', ''));
   assert.throws(() => checkWorkflow(malformed), /expected npm fallback closing fi/);
 });
+
+test('CI npm fallback is not spoofed by an unrelated earlier else/fi pair', () => {
+  const unrelatedBlock = [
+    '          if [ -f unrelated.lock ]; then',
+    '            echo unrelated',
+    '            else',
+    '            echo unrelated fallback',
+    '            fi',
+  ].join('\n');
+  const malformed = `${unrelatedBlock}\n${validWorkflow.replace('            else\n              npm run check --if-present', '            npm run check --if-present')}`;
+  assert.throws(() => checkWorkflow(malformed), /expected npm fallback else branch/);
+});
+
+test('CI npm fallback rejects nested else/fi that closes the wrong branch', () => {
+  const nested = npmBranch.replace(
+    '            else\n              npm run check --if-present',
+    '            if [ -n "$NESTED" ]; then\n              echo nested\n            else\n              echo nested fallback\n            fi\n            else\n              npm run check --if-present',
+  );
+  const malformed = withNpmBranch(nested);
+  assert.throws(() => checkWorkflow(malformed));
+});
